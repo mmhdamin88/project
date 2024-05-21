@@ -7,11 +7,11 @@ cursor = connection.cursor()
 cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Students'")
 result = cursor.fetchone()
 if result == None:
-    cursor.execute("CREATE TABLE Students(id,family_name,name,age,student_code)")
+    cursor.execute("CREATE TABLE Students(id,fwgege,family_name,name,age,student_code)")
 
 
-def insert(id,family_name,name,age,Student_Code):
-    cursor.execute("INSERT into Students values(?,?,?,?,?)",(id,family_name,name,age,Student_Code))
+def insert(id,fwgege,family_name,name,age,Student_Code):
+    cursor.execute("INSERT into Students values(?,?,?,?,?,?)",(id,fwgege,family_name,name,age,Student_Code))
     connection.commit()
     connection.close()
 def delete(Student_Code):
@@ -40,12 +40,13 @@ while True:
     operation = operation.lower()
     if operation == "insert":
         id = input("Please enter id :")
+        fwgege = input("Please enter id :")
         family_name = input("Pease enter your family name :")
         name = input("Please enter your name :")
         age = input("Please enter your age :")
         Student_code = random.randint(100_000,999_999)
         print(Student_code)
-        insert(id,family_name,name,age,Student_code)
+        insert(id,fwgege,family_name,name,age,Student_code)
     elif operation == "delete":
         Student_Code = input("Please enter your Student Code :")
         delete(Student_Code)
