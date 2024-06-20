@@ -6,6 +6,23 @@ db_path = "Univercity.db"
 connection = sqlite3.connect("Univercity.db")
 cursor = connection.cursor()
 
+try:
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+    cursor.execute("""
+        SELECT name
+        FROM sqlite_master 
+        WHERE type='table' AND name=?;
+    """, ("Students",))
+    result = cursor.fetchone()
+    if result:
+        pass
+    else:
+        cursor.execute("CREATE TABLE Students(id,family_name,name,age,student_code)")
+except sqlite3.Error as e:
+    print(f"An error occurred: {e}")
+    
+
 # cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Students'")
 # result = cursor.fetchone()
 # if result == None:
@@ -13,17 +30,15 @@ cursor = connection.cursor()
 
 def insert_user(id,family_name,name,age,Student_Code):
     table_name = "Students"
-    check_table_exists(db_path,table_name)
     cursor.execute("INSERT into Students values(?,?,?,?,?)",(id,family_name,name,age,Student_Code))
     connection.commit()
-    connection.close()
+    
     
 def insert_course(id,math_score,geography_score,Student_code):
     table_name = "Courses"
-    check_table_exists(db_path,table_name)
     cursor.execute("INSERT into Courses values(?,?,?,?)",(id,math_score,geography_score,Student_code))
     connection.commit()
-    connection.close()
+    
 
 
 def delete_user():
@@ -39,14 +54,13 @@ def delete_user():
     name = input("Please Enter desired name: ")
     cursor.execute('DELETE FROM Students WHERE name= ?', (name,))
     connection.commit()
-    connection.close()
+    
 
 def delete_Courses(Student_Code):
     table_name = "Courses"
-    check_table_exists(db_path,table_name)
     cursor.execute("DELETE from Courses WHERE Student_Code = ?",(Student_Code))
     connection.commit()
-    connection.close()
+    
 
 def edit_Students(Student_Code):
     cursor = connection.cursor()
@@ -61,6 +75,8 @@ def edit_Students(Student_Code):
     elif x == "age":
         newage = int(input("Please enter your new age :"))
         cursor.execute("UPDATE Students SET age = ? WHERE Student_Code = ?",(newage,Student_Code))
+    connection.commit()
+    
 def edit_Courses(Students_Code):
     cursor = connection.cursor()
     x = input("What do you want to change? :")
@@ -74,7 +90,7 @@ def edit_Courses(Students_Code):
     else:
         print("ERROR!Please enter a valid data.")
     connection.commit()
-    connection.close()
+    
 
 def check_table_exists(db_path, table_name):
     try:
@@ -115,22 +131,21 @@ while True:
         insert_course(id,math_score,geography_score,Student_code)
     elif operation == "delete_user":
         delete_user()
-    elif operation == "delete_Courses":
+    elif operation == "delete_courses":
         delete_Courses(Student_Code)
-    elif operation == "edit_Students":
+    elif operation == "edit_students":
         Student_Code = int(input("Please enter your Student Code :"))
         edit_Students(Student_Code)
-    elif operation == "edit_Courses":
+    elif operation == "edit_courses":
         Student_Code = int(input("Please enter your Student Code :"))
         edit_Courses(Student_Code)
-    elif operation == "show_Students":
-        cursor.execute("SELECT * from Students")
-        row = cursor.fetchall()
+    elif operation == "show_students":
+        row = cursor.execute("SELECT * from Students")
         for r in row:
             print(r)
-    elif operation == "show_Courses":
-        cursor.execute("SELECT * from Courses")
-        row = cursor.fetchall()
+    elif operation == "show_courses":
+        row = cursor.execute("SELECT * from Courses")
+        
         for r in row:
             print(r)
     else:
@@ -142,4 +157,5 @@ while True:
         continue
     else:
         print("Finished")
+        connection.close()
         break
