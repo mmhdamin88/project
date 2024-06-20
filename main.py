@@ -26,10 +26,18 @@ def insert_course(id,math_score,geography_score,Student_code):
     connection.close()
 
 
-def delete_user(Student_Code):
-    table_name = "Students"
-    check_table_exists(db_path,table_name)
-    cursor.execute("DELETE from Students WHERE Student_Code = ?",(Student_Code))
+def delete_user():
+    # table_name = "Students"
+    # check_table_exists(db_path,table_name)
+    # cursor.execute("DELETE from Students WHERE Student_Code = ?",(Student_Code))
+    # connection.commit()
+    # connection.close()
+    cursor.execute('SELECT * FROM Students')
+    rows = cursor.fetchall()
+    for row in rows:
+        print(row)
+    name = input("Please Enter desired name: ")
+    cursor.execute('DELETE FROM Students WHERE name= ?', (name,))
     connection.commit()
     connection.close()
 
@@ -73,7 +81,7 @@ def check_table_exists(db_path, table_name):
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT name 
+            SELECT name
             FROM sqlite_master 
             WHERE type='table' AND name=?;
         """, (table_name,))
@@ -106,10 +114,8 @@ while True:
         Student_code = int(input("Please enter your Student_Code: "))
         insert_course(id,math_score,geography_score,Student_code)
     elif operation == "delete_user":
-        Student_Code = input("Please enter your Student Code :")
-        delete_user(Student_Code)
+        delete_user()
     elif operation == "delete_Courses":
-        Student_Code = input("Please enter your Student Code :")
         delete_Courses(Student_Code)
     elif operation == "edit_Students":
         Student_Code = int(input("Please enter your Student Code :"))
