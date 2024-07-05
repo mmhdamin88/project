@@ -1,8 +1,8 @@
 import os
 import sqlite3
 import random
-db_path = "Univercity.db"
 
+db_path = "Univercity.db"
 connection = sqlite3.connect("Univercity.db")
 cursor = connection.cursor()
 
@@ -12,7 +12,7 @@ try:
     cursor.execute("""
         SELECT name
         FROM sqlite_master 
-        WHERE type='table' AND name=?;
+        WHERE type='table' AND name=(?);
     """, ("Students",))
     result = cursor.fetchone()
     if result:
@@ -21,32 +21,18 @@ try:
         cursor.execute("CREATE TABLE Students(id,family_name,name,age,student_code)")
 except sqlite3.Error as e:
     print(f"An error occurred: {e}")
-    
-
-# cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Students'")
-# result = cursor.fetchone()
-# if result == None:
-#     cursor.execute("CREATE TABLE Students(id,family_name,name,age,student_code)")
 
 def insert_user(id,family_name,name,age,Student_Code):
     table_name = "Students"
     cursor.execute("INSERT into Students values(?,?,?,?,?)",(id,family_name,name,age,Student_Code))
     connection.commit()
     
-    
 def insert_course(id,math_score,geography_score,Student_code):
     table_name = "Courses"
     cursor.execute("INSERT into Courses values(?,?,?,?)",(id,math_score,geography_score,Student_code))
     connection.commit()
     
-
-
 def delete_user():
-    # table_name = "Students"
-    # check_table_exists(db_path,table_name)
-    # cursor.execute("DELETE from Students WHERE Student_Code = ?",(Student_Code))
-    # connection.commit()
-    # connection.close()
     cursor.execute('SELECT * FROM Students')
     rows = cursor.fetchall()
     for row in rows:
@@ -55,13 +41,11 @@ def delete_user():
     cursor.execute('DELETE FROM Students WHERE name= ?', (name,))
     connection.commit()
     
-
 def delete_Courses(Student_Code):
     table_name = "Courses"
     cursor.execute("DELETE from Courses WHERE Student_Code = ?",(Student_Code))
     connection.commit()
     
-
 def edit_Students(Student_Code):
     cursor = connection.cursor()
     x = input("What do you want to change? :")
@@ -90,27 +74,6 @@ def edit_Courses(Students_Code):
     else:
         print("ERROR!Please enter a valid data.")
     connection.commit()
-    
-
-def check_table_exists(db_path, table_name):
-    try:
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT name
-            FROM sqlite_master 
-            WHERE type='table' AND name=?;
-        """, (table_name,))
-        result = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        if result:
-            return True
-        else:
-            return False
-    except sqlite3.Error as e:
-        print(f"An error occurred: {e}")
-        return False
     
 while True:
     operation = input("Please enter a correct operation :")
@@ -145,7 +108,6 @@ while True:
             print(r)
     elif operation == "show_courses":
         row = cursor.execute("SELECT * from Courses")
-        
         for r in row:
             print(r)
     else:
